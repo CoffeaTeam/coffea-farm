@@ -91,7 +91,7 @@ metadata:
     chart: dask-4.1.1
     component: worker
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: dask
@@ -116,11 +116,13 @@ spec:
             - dask-worker
             - coffea-dask-scheduler:8786
             - --no-dashboard
+            - --nthreads
+            - "4"
           ports:
             - containerPort: 8789
           resources:
             requests:
-              cpu: 8
+              cpu: 4
           env:
             null
           volumeMounts:
@@ -129,3 +131,24 @@ spec:
       volumes:
       - name: scratch-volume
         emptyDir: {}
+---
+# Source: dask/templates/dask-scheduler-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: coffea-dask-scheduler
+  labels:
+    app: coffea-dask-scheduler
+    chart: "dask-4.1.1"
+    release: "coffea-dask"
+    heritage: "Helm"
+  annotations:
+    null
+spec:
+  rules:
+  - host: coffea-dask.fnal.gov
+    http:
+      paths:
+      - backend:
+          serviceName: coffea-dask-scheduler
+          servicePort: 8787
