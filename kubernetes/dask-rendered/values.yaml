@@ -1,8 +1,9 @@
 scheduler:
   name: scheduler
   image:
-    repository: "daskdev/dask"
-    tag: 2.9.0
+    # repository: "daskdev/dask"
+    repository: "ncsmith91/coffea-dask"
+    tag: 0.1.0
     pullPolicy: IfNotPresent
     # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     pullSecrets:
@@ -39,8 +40,9 @@ webUI:
 worker:
   name: worker
   image:
-    repository: "daskdev/dask"
-    tag: 2.9.0
+    # repository: "daskdev/dask"
+    repository: "ncsmith91/coffea-dask"
+    tag: 0.1.0
     pullPolicy: IfNotPresent
     # dask_worker: "dask-cuda-worker"
     dask_worker: "dask-worker"
@@ -51,19 +53,19 @@ worker:
   default_resources:  # overwritten by resource limits if they exist
     cpu: 1
     memory: "2GiB"
-  env:
-    - name: EXTRA_CONDA_PACKAGES
-      value: numpy numba -c conda-forge
-    - name: EXTRA_PIP_PACKAGES
-      value: coffea --upgrade
+  #env:
+  #  - name: EXTRA_CONDA_PACKAGES
+  #    value: numpy numba xrootd lzma lz4 blosc python-blosc -c conda-forge
+  #  - name: EXTRA_PIP_PACKAGES
+  #    value: coffea --upgrade
   resources: {}
-  #  limits:
+  # limits:
   #    cpu: 1
-  #    memory: 3G
+  #   memory: 4G
   #    nvidia.com/gpu: 1
-  #  requests:
-  #    cpu: 1
-  #    memory: 3G
+  # requests:
+  #   cpu: 1
+  #   memory: 2G
   #    nvidia.com/gpu: 1
   tolerations: []
   nodeSelector: {}

@@ -55,7 +55,7 @@ spec:
         null
       containers:
         - name: coffea-dask-scheduler
-          image: "daskdev/dask:2.9.0"
+          image: "ncsmith91/coffea-dask:0.1.1"
           imagePullPolicy: IfNotPresent
           args:
             - dask-scheduler
@@ -70,6 +70,12 @@ spec:
             {}
           env:
             null
+          volumeMounts:
+          - mountPath: /opt/app
+            name: scratch-volume
+      volumes:
+      - name: scratch-volume
+        emptyDir: {}
 ---
 # Source: dask/templates/dask-worker-deployment.yaml
 apiVersion: apps/v1
@@ -102,7 +108,7 @@ spec:
         null
       containers:
         - name: coffea-dask-worker
-          image: "daskdev/dask:2.9.0"
+          image: "ncsmith91/coffea-dask:0.1.1"
           imagePullPolicy: IfNotPresent
           args:
             - dask-worker
@@ -113,7 +119,10 @@ spec:
           resources:
             {}
           env:
-            - name: EXTRA_CONDA_PACKAGES
-              value: numpy numba -c conda-forge
-            - name: EXTRA_PIP_PACKAGES
-              value: coffea --upgrade
+            null
+          volumeMounts:
+          - mountPath: /opt/app
+            name: scratch-volume
+      volumes:
+      - name: scratch-volume
+        emptyDir: {}
