@@ -1,42 +1,4 @@
 ---
-# Source: dask/templates/dask-jupyter-config.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: coffea-dask-jupyter-config
-  labels:
-    app: dask
-    heritage: "Helm"
-    release: "coffea-dask"
-    chart: dask-4.1.1
-    component: jupyter
-data:
-  jupyter_notebook_config.py: |
-    c = get_config()
-    c.NotebookApp.password = 'sha1:aae8550c0a44:9507d45e087d5ee481a5ce9f4f16f37a0867318c'
----
-# Source: dask/templates/dask-jupyter-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: coffea-dask-jupyter
-  labels:
-    app: dask
-    heritage: "Helm"
-    release: "coffea-dask"
-    chart: dask-4.1.1
-    component: jupyter
-spec:
-  ports:
-    - name: coffea-dask-jupyter
-      port: 80
-      targetPort: 8888
-  selector:
-    app: dask
-    release: "coffea-dask"
-    component: jupyter
-  type: LoadBalancer
----
 # Source: dask/templates/dask-scheduler-service.yaml
 apiVersion: v1
 kind: Service
@@ -61,56 +23,6 @@ spec:
     release: "coffea-dask"
     component: scheduler
   type: LoadBalancer
----
-# Source: dask/templates/dask-jupyter-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: coffea-dask-jupyter
-  labels:
-    app: dask
-    heritage: "Helm"
-    release: "coffea-dask"
-    chart: dask-4.1.1
-    component: jupyter
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: dask
-      release: "coffea-dask"
-      component: jupyter
-  strategy:
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: dask
-        release: "coffea-dask"
-        component: jupyter
-    spec:
-      imagePullSecrets:
-        null
-      containers:
-        - name: coffea-dask-jupyter
-          image: "daskdev/dask-notebook:2.8.1"
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8888
-          resources:
-            {}
-          volumeMounts:
-            - name: config-volume
-              mountPath: /home/jovyan/.jupyter
-          env:
-            - name: DASK_SCHEDULER_ADDRESS
-              value: coffea-dask-scheduler:8786
-      nodeSelector:
-        {}
-      volumes:
-        - name: config-volume
-          configMap:
-            name: coffea-dask-jupyter-config
 ---
 # Source: dask/templates/dask-scheduler-deployment.yaml
 apiVersion: apps/v1
@@ -143,7 +55,7 @@ spec:
         null
       containers:
         - name: coffea-dask-scheduler
-          image: "daskdev/dask:2.8.1"
+          image: "daskdev/dask:2.9.0"
           imagePullPolicy: IfNotPresent
           args:
             - dask-scheduler
@@ -190,7 +102,7 @@ spec:
         null
       containers:
         - name: coffea-dask-worker
-          image: "daskdev/dask:2.8.1"
+          image: "daskdev/dask:2.9.0"
           imagePullPolicy: IfNotPresent
           args:
             - dask-worker
@@ -201,4 +113,7 @@ spec:
           resources:
             {}
           env:
-            null
+            - name: EXTRA_CONDA_PACKAGES
+              value: numpy numba -c conda-forge
+            - name: EXTRA_PIP_PACKAGES
+              value: coffea --upgrade

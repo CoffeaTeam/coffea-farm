@@ -9,3 +9,8 @@ helm repo add dask https://helm.dask.org/
 helm repo update
 helm template coffea-dask dask/dask > manifest.yaml
 ```
+
+After configuration of `values.yaml`, a new manifest can be rendered using
+```
+helm template --values values.yaml coffea-dask dask/dask > manifest.yaml
+```
