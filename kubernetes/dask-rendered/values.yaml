@@ -25,7 +25,7 @@ scheduler:
 
 webUI:
   name: webui
-  servicePort: 80
+  servicePort: 8787
   ingress:
     enabled: false
     tls: false

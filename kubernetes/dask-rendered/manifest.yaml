@@ -16,7 +16,7 @@ spec:
       port: 8786
       targetPort: 8786
     - name: coffea-dask-webui
-      port: 80
+      port: 8787
       targetPort: 8787
   selector:
     app: dask
