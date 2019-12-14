@@ -91,7 +91,7 @@ metadata:
     chart: dask-4.1.1
     component: worker
 spec:
-  replicas: 4
+  replicas: 20
   selector:
     matchLabels:
       app: dask
@@ -122,7 +122,7 @@ spec:
             - containerPort: 8789
           resources:
             requests:
-              cpu: 4
+              cpu: 3.8
           env:
             null
           volumeMounts:
