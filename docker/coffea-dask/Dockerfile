@@ -29,7 +29,7 @@ RUN conda install --yes \
     numba \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir coffea
+RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.24
 
 RUN mkdir /opt/app
 
