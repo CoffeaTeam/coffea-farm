@@ -15,7 +15,7 @@ RUN apt-get install gnupg2 -y \
 RUN conda install --yes \
     -c conda-forge \
     lz4 \
-    xrootd \
+    xrootd==4.11.0 \
     tini==0.18.0 \
     && conda clean -tipsy
 
@@ -26,10 +26,12 @@ RUN conda install --yes \
     dask==2.9.0 \
     numpy==1.17.4 \
     pandas==0.25.2 \
-    numba \
+    numba==0.46.0 \
+    matplotlib==3.1.2 \
+    scipy==1.4.0 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.24
+RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.25 jump-consistent-hash
 
 RUN mkdir /opt/app
 
