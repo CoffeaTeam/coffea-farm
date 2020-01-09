@@ -31,7 +31,7 @@ RUN conda install --yes \
     scipy==1.4.0 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.25 jump-consistent-hash
+RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.28 jump-consistent-hash
 
 RUN mkdir /opt/app
 
