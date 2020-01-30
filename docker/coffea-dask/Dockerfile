@@ -23,15 +23,15 @@ RUN conda install --yes \
     -c conda-forge \
     python-blosc \
     cytoolz \
-    dask==2.9.0 \
-    numpy==1.17.4 \
-    pandas==0.25.2 \
-    numba==0.46.0 \
+    dask==2.10.0 \
+    numpy==1.18.1 \
+    pandas==0.25.3 \
+    numba==0.48.0 \
     matplotlib==3.1.2 \
-    scipy==1.4.0 \
+    scipy==1.4.1 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.30 jump-consistent-hash
+RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/scikit-hep/uproot-methods/archive/master.zip https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip
 
 RUN mkdir /opt/app
 
