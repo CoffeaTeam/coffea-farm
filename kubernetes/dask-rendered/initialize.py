@@ -111,9 +111,8 @@ if 'user_proxy' not in plugins:
 if 'boostedhiggs' not in plugins:
     client.register_worker_plugin(InstallPackage('https://github.com/nsmith-/boostedhiggs/archive/dev.zip'), 'boostedhiggs')
 
-if 'cache' not in plugins:
-    from coffea.processor.dask import ColumnCacheHolder
-    client.register_worker_plugin(ColumnCacheHolder(), 'cache')
+from coffea.processor.dask import register_columncache
+register_columncache(client)
 
 if False:
     jump_assignment = WorkerJumpAssignment()

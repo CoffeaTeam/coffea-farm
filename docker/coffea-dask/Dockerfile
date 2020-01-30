@@ -31,7 +31,7 @@ RUN conda install --yes \
     scipy==1.4.1 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/scikit-hep/uproot-methods/archive/master.zip https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip
+RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/scikit-hep/uproot-methods/archive/master.zip https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip # dev0
 
 RUN mkdir /opt/app
 
