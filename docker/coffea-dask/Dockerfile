@@ -23,6 +23,7 @@ RUN conda install --yes \
     -c conda-forge \
     python-blosc \
     cytoolz \
+    bokeh==1.3.4 \
     dask==2.10.0 \
     numpy==1.18.1 \
     pandas==0.25.3 \
@@ -31,7 +32,7 @@ RUN conda install --yes \
     scipy==1.4.1 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/scikit-hep/uproot-methods/archive/master.zip https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip # dev0
+RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip # dev1
 
 RUN mkdir /opt/app
 
