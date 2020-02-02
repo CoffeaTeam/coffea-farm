@@ -37,7 +37,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/coffeateam/$IMAGE_NAME
+          IMAGE_ID=docker.pkg.github.com/coffeateam/$IMAGE_NAME/$IMAGE_NAME
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
