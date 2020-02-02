@@ -24,7 +24,7 @@ RUN conda install --yes \
     python-blosc \
     cytoolz \
     bokeh==1.3.4 \
-    dask==2.10.0 \
+    dask==2.10.1 \
     numpy==1.18.1 \
     pandas==0.25.3 \
     numba==0.48.0 \
@@ -32,7 +32,7 @@ RUN conda install --yes \
     scipy==1.4.1 \
     && conda clean -tipsy
 
-RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip # dev1
+RUN /opt/conda/bin/pip install --no-cache-dir https://github.com/CoffeaTeam/coffea/archive/daskaffinity.zip # dev2
 
 RUN mkdir /opt/app
 
