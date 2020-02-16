@@ -19,8 +19,7 @@ env:
 
 jobs:
 
-  # Push image to GitHub Package Registry.
-  # See also https://docs.docker.com/docker-hub/builds/
+  # Push image to dockerhub
   push:
 
     runs-on: ubuntu-latest
@@ -33,11 +32,11 @@ jobs:
         run: docker build . --file docker/coffea-dask/Dockerfile --tag image
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u ncsmith91 --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/coffeateam/$IMAGE_NAME/$IMAGE_NAME
+          IMAGE_ID=coffeateam/$IMAGE_NAME
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
