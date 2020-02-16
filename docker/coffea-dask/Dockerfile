@@ -1,6 +1,5 @@
 # based on https://github.com/dask/dask-docker/blob/master/base/Dockerfile
 # but more permissive about image size due to read-only requirement in openshift
-# FROM daskdev/dask:2.9.0
 FROM continuumio/miniconda3:4.7.12
 
 RUN apt-get install gnupg2 -y \
@@ -12,17 +11,17 @@ RUN apt-get install gnupg2 -y \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN conda install --yes \
+RUN conda install --yes --freeze-installed \
     -c conda-forge \
-    lz4 \
+    lz4==2.2.1 \
     xrootd==4.11.0 \
     tini==0.18.0 \
-    && conda clean -tipsy
+    && conda clean -afy
 
-RUN conda install --yes \
+RUN conda install --yes --freeze-installed \
     -c conda-forge \
-    python-blosc \
-    cytoolz \
+    python-blosc==1.8.3 \
+    cytoolz==0.10.1 \
     bokeh==1.3.4 \
     dask==2.10.1 \
     numpy==1.18.1 \
@@ -30,7 +29,7 @@ RUN conda install --yes \
     numba==0.48.0 \
     matplotlib==3.1.2 \
     scipy==1.4.1 \
-    && conda clean -tipsy
+    && conda clean -afy
 
 RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.33
 
