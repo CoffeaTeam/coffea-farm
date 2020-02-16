@@ -55,7 +55,7 @@ spec:
         null
       containers:
         - name: coffea-dask-scheduler
-          image: "ncsmith91/coffea-dask:0.1.2"
+          image: "coffeateam/coffea-dask:0.1.12"
           imagePullPolicy: IfNotPresent
           args:
             - dask-scheduler
@@ -110,14 +110,16 @@ spec:
         null
       containers:
         - name: coffea-dask-worker
-          image: "ncsmith91/coffea-dask:0.1.2"
+          image: "coffeateam/coffea-dask:0.1.12"
           imagePullPolicy: IfNotPresent
           args:
             - dask-worker
             - coffea-dask-scheduler:8786
             - --no-dashboard
-            - --nthreads
+            - --nprocs
             - "4"
+            - --nthreads
+            - "1"
           ports:
             - containerPort: 8789
           resources:
