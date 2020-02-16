@@ -87,13 +87,15 @@ class InstallPackage(WorkerPlugin):
     def __init__(self, name):
         self.name = name
 
-    def setup(self, worker):
-        import os, sys, subprocess
+    async def setup(self, worker):
+        import os, sys, subprocess, socket
+        from distributed import Lock
         installdir = os.path.join(os.path.dirname(worker.local_directory), '.local')
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--prefix', installdir, self.name])
         sitepackages = os.path.join(installdir, 'lib', 'python' + sys.version[:3], 'site-packages')
-        if sitepackages not in sys.path:
-            sys.path.insert(0, sitepackages)
+        async with Lock(socket.gethostname()):
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--prefix', installdir, self.name])
+            if sitepackages not in sys.path:
+                sys.path.insert(0, sitepackages)
 
     def teardown(self, worker):
         pass
@@ -101,7 +103,9 @@ class InstallPackage(WorkerPlugin):
 
 client = Client(os.environ['DASK_SCHEDULER'])
 plugins = set()
-for p in client.run(lambda: set(get_worker().plugins)).values():
+for w, p in client.run(lambda: set(get_worker().plugins)).items():
+    if len(plugins) > 0 and len(plugins - p) > 0:
+        print(w, p)
     plugins |= p
 print("Current plugins:", plugins)
 
