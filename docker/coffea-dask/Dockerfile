@@ -14,6 +14,7 @@ RUN apt-get install gnupg2 -y \
 RUN conda install --yes --freeze-installed \
     -c conda-forge \
     lz4==2.2.1 \
+    python-xxhash==1.3.0 \
     xrootd==4.11.0 \
     tini==0.18.0 \
     && conda clean -afy
