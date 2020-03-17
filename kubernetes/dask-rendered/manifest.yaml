@@ -55,7 +55,7 @@ spec:
         null
       containers:
         - name: coffea-dask-scheduler
-          image: "coffeateam/coffea-dask:0.1.12"
+          image: "coffeateam/coffea-dask:0.1.16"
           imagePullPolicy: IfNotPresent
           args:
             - dask-scheduler
@@ -68,8 +68,11 @@ spec:
             - containerPort: 8787
           resources:
             requests:
-              cpu: 1
-              memory: 3G
+              cpu: 2
+              memory: 4G
+            limits:
+              cpu: 2
+              memory: 4G
           env:
             null
           volumeMounts:
@@ -91,7 +94,7 @@ metadata:
     chart: dask-4.1.1
     component: worker
 spec:
-  replicas: 20
+  replicas: 15
   selector:
     matchLabels:
       app: dask
@@ -110,29 +113,37 @@ spec:
         null
       containers:
         - name: coffea-dask-worker
-          image: "coffeateam/coffea-dask:0.1.12"
+          image: "coffeateam/coffea-dask:0.1.16"
           imagePullPolicy: IfNotPresent
           args:
             - dask-worker
             - coffea-dask-scheduler:8786
             - --no-dashboard
-            - --nprocs
-            - "4"
             - --nthreads
-            - "1"
+            - "4"
           ports:
             - containerPort: 8789
           resources:
             requests:
-              cpu: 3.8
+              cpu: 3.9
+              memory: 7G
+            limits:
+              cpu: 4
+              memory: 8G
           env:
-            null
+          - name: MALLOC_MMAP_THRESHOLD_
+            value: "16384"
           volumeMounts:
           - mountPath: /opt/app
             name: scratch-volume
+          - mountPath: /opt/columnstore
+            name: columnstore
       volumes:
       - name: scratch-volume
         emptyDir: {}
+      - name: columnstore
+        persistentVolumeClaim:
+          claimName: columnstore
 ---
 # Source: dask/templates/dask-scheduler-ingress.yaml
 apiVersion: extensions/v1beta1

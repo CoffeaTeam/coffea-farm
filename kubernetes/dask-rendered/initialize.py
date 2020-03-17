@@ -113,7 +113,7 @@ if 'user_proxy' not in plugins:
     client.register_worker_plugin(ConfigureXRootD(), 'user_proxy')
 
 if 'boostedhiggs' not in plugins:
-    client.register_worker_plugin(InstallPackage('https://github.com/nsmith-/boostedhiggs/archive/dev.zip'), 'boostedhiggs')
+    client.register_worker_plugin(InstallPackage('https://github.com/nsmith-/boostedhiggs/archive/master.zip'), 'boostedhiggs')
 
 from coffea.processor.dask import register_columncache
 register_columncache(client)
