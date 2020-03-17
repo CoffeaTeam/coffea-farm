@@ -1,6 +1,6 @@
 # based on https://github.com/dask/dask-docker/blob/master/base/Dockerfile
 # but more permissive about image size due to read-only requirement in openshift
-FROM continuumio/miniconda3:4.7.12
+FROM continuumio/miniconda3:4.8.2
 
 RUN apt-get install gnupg2 -y \
     && wget -q -O - https://dist.eugridpma.info/distribution/igtf/current/GPG-KEY-EUGridPMA-RPM-3 | apt-key add - \
@@ -13,27 +13,22 @@ RUN apt-get install gnupg2 -y \
 
 RUN conda install --yes --freeze-installed \
     -c conda-forge \
-    lz4==2.2.1 \
-    python-xxhash==1.3.0 \
-    xrootd==4.11.0 \
-    tini==0.18.0 \
-    && conda clean -afy
-
-RUN conda install --yes --freeze-installed \
-    -c conda-forge \
-    python-blosc==1.8.3 \
-    cytoolz==0.10.1 \
-    bokeh==1.3.4 \
-    dask==2.11.0 \
-    distributed==2.11.0 \
-    numpy==1.18.1 \
-    pandas==0.25.3 \
+    bokeh==2.0.0 \
+    dask==2.12.0 \
+    distributed==2.12.0 \
+    matplotlib==3.2.0 \
+    lz4==3.0.2 \
     numba==0.48.0 \
-    matplotlib==3.1.2 \
+    numpy==1.18.1 \
+    pandas==1.0.2 \
+    python-blosc==1.7.0 \
     scipy==1.4.1 \
+    xrootd==4.11.2 \
     && conda clean -afy
 
-RUN /opt/conda/bin/pip install --no-cache-dir coffea==0.6.33
+RUN /opt/conda/bin/pip install --no-cache-dir \
+    xxhash==1.3.0 \
+    coffea==0.6.36
 
 RUN mkdir /opt/app
 
