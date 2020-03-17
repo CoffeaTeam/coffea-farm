@@ -14,6 +14,7 @@ RUN apt-get install gnupg2 -y \
 RUN conda install --yes --freeze-installed \
     -c conda-forge \
     lz4==2.2.1 \
+    python-xxhash==1.3.0 \
     xrootd==4.11.0 \
     tini==0.18.0 \
     && conda clean -afy
@@ -23,7 +24,8 @@ RUN conda install --yes --freeze-installed \
     python-blosc==1.8.3 \
     cytoolz==0.10.1 \
     bokeh==1.3.4 \
-    dask==2.10.1 \
+    dask==2.11.0 \
+    distributed==2.11.0 \
     numpy==1.18.1 \
     pandas==0.25.3 \
     numba==0.48.0 \
