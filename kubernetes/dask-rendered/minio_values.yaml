@@ -1,0 +1,22 @@
+# helm install -f minio_values.yaml columnstore bitnami/minio
+securityContext:
+  enabled: true
+  fsGroup: 1000340000
+  runAsUser: 1000340000
+mode: distributed
+statefulset:
+  replicaCount: 8
+resources:
+  limits:
+    cpu: 500m
+    memory: 1G
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    cpu: 500m
+    memory: 512Mi
+global:
+  storageClass: glusterfs-registry-block
+persistence:
+  size: 45Gi

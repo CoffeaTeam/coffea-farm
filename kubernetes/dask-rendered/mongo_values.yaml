@@ -1,0 +1,11 @@
+# helm install -f mongo_values.yaml coffeadb bitnami/mongodb
+securityContext:
+  enabled: true
+  fsGroup: 1000340000
+  runAsUser: 1000340000
+mongodbDatabase: coffeadb
+mongodbUsername: coffea
+resources:
+  limits:
+    cpu: 1
+    memory: 2G
