@@ -16,13 +16,14 @@ RUN conda install --yes --freeze-installed \
     bokeh==2.0.0 \
     dask==2.12.0 \
     distributed==2.12.0 \
-    matplotlib==3.2.0 \
+    matplotlib==3.2.1 \
     lz4==3.0.2 \
     numba==0.48.0 \
     numpy==1.18.1 \
-    pandas==1.0.2 \
-    python-blosc==1.7.0 \
+    pandas==1.0.3 \
+    python-blosc==1.8.3 \
     scipy==1.4.1 \
+    tini==0.18.0 \
     xrootd==4.11.2 \
     && conda clean -afy
 
