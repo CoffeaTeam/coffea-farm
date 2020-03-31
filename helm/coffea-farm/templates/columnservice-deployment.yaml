@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-columnservice
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: columnservice
+spec:
+  replicas: {{ .Values.columnservice.replicas }}
+  selector:
+    matchLabels:
+      {{- include "coffea-farm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: columnservice
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "coffea-farm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: columnservice
+    spec:
+    {{- with .Values.columnservice.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.columnservice.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ template "coffea-farm.fullname" . }}-columnservice
+          securityContext:
+            {{- toYaml .Values.columnservice.securityContext | nindent 12 }}
+          image: "{{ .Values.columnservice.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.columnservice.image.pullPolicy }}
+          args:
+            - uvicorn
+            - --host
+            - 0.0.0.0
+            - columnservice:app
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.columnservice.resources | nindent 12 }}
+          env:
+          - name: X509_USER_PROXY
+            value: "/grid-proxy/x509up"
+          - name: COLUMNSERVICE_BUCKET
+            value: {{ .Values.columnservice.bucketname }}
+          - name: DASK_SCHEDULER
+            value: {{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}
+          - name: MINIO_HOSTNAME
+            value: {{ .Release.Name }}-minio:{{ .Values.minio.service.port }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-minio
+                key: access-key
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-minio
+                key: secret-key
+          - name: MONGODB_HOSTNAME
+            value: {{ .Release.Name }}-mongodb:{{ .Values.mongodb.service.port }}
+          - name: MONGODB_DATABASE
+            value: {{ .Values.mongodb.mongodbDatabase }}
+          - name: MONGODB_USERNAME
+            value: {{ .Values.mongodb.mongodbUsername }}
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mongodb
+                key: mongodb-password
+          {{- with .Values.columnservice.env }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: /grid-proxy
+            name: grid-proxy
+            readOnly: true
+      volumes:
+      - name: grid-proxy
+        secret:
+          secretName: grid-proxy
+      {{- with .Values.columnservice.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.columnservice.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.columnservice.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

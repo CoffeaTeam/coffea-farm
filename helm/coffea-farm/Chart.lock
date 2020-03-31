@@ -1,0 +1,9 @@
+dependencies:
+- name: minio
+  repository: https://charts.bitnami.com/bitnami
+  version: 3.0.15
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 7.8.10
+digest: sha256:cf2f5147ab37007778a0465e56aefb0cc4f246d6537f254134f5084415e2f4d6
+generated: "2020-03-31T15:27:58.375380119-05:00"

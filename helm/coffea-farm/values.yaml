@@ -1,0 +1,117 @@
+nameOverride: ""
+fullnameOverride: ""
+
+columnservice:
+  replicaCount: 1
+
+  image:
+    repository: coffeateam/coffea-columnservice
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext:
+    runAsUser: 1000340000
+
+  bucketname: columnservice
+  env: {}
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  ingress:
+    enabled: false
+    annotations: {}
+    hosts:
+      - host: coffea-farm.example.edu
+        paths: ["/api"]
+    tls: []
+
+minio:
+  name: columnstore
+  securityContext:
+    enabled: true
+    fsGroup: 1000340000
+    runAsUser: 1000340000
+  mode: distributed
+  statefulset:
+    replicaCount: 4
+  # passwords cannot be dynamic as volume is encrypted?
+  accessKey:
+    forcePassword: true
+  secretKey:
+    forcePassword: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  global:
+    storageClass: glusterfs-registry-block
+  persistence:
+    size: 45Gi
+
+mongodb:
+  securityContext:
+    enabled: true
+    fsGroup: 1000340000
+    runAsUser: 1000340000
+  mongodbDatabase: coffeadb
+  mongodbUsername: coffea
+  # mongodbRootPassword can be dynamic
+  # mongodbPassword can be dynamic
+  resources:
+    limits:
+      cpu: 1
+      memory: 2G
+
+scheduler:
+  name: scheduler
+  image:
+    repository: "coffeateam/coffea-dask"
+    tag: dev
+    pullPolicy: IfNotPresent
+  replicas: 1
+  env: {}
+  service:
+    type: "LoadBalancer"
+    port: 8786
+    uiport: 8787
+    externalIPs: []
+  resources:
+    requests:
+      cpu: 1
+      memory: 2G
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+
+worker:
+  name: worker
+  image:
+    repository: "coffeateam/coffea-dask"
+    tag: dev
+    pullPolicy: IfNotPresent
+    dask_worker: "dask-worker"
+  scratchDir: /opt/app
+  replicas: 10
+  env:
+  - name: MALLOC_MMAP_THRESHOLD_
+    value: "16384"
+  resources:
+    requests:
+      cpu: 4
+      memory: 8G
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}

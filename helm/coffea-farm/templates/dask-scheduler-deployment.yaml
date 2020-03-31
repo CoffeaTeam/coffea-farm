@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-scheduler
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    component: scheduler
+spec:
+  replicas: {{ .Values.scheduler.replicas }}
+  selector:
+    matchLabels:
+      {{- include "coffea-farm.selectorLabels" . | nindent 6 }}
+      component: scheduler
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "coffea-farm.selectorLabels" . | nindent 8 }}
+        component: scheduler
+    spec:
+    {{- with .Values.scheduler.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.scheduler.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ template "coffea-farm.fullname" . }}-scheduler
+          securityContext:
+            {{- toYaml .Values.scheduler.securityContext | nindent 12 }}
+          image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
+          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+          args:
+            - dask-scheduler
+          ports:
+            - name: dask
+              containerPort: 8786
+              protocol: TCP
+            - name: bokeh
+              containerPort: 8787
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.scheduler.resources | nindent 12 }}
+          env:
+          - name: X509_USER_PROXY
+            value: "/grid-proxy/x509up"
+          {{- with .Values.scheduler.env }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: /grid-proxy
+            name: grid-proxy
+            readOnly: true
+      volumes:
+      - name: grid-proxy
+        secret:
+          secretName: grid-proxy
+    {{- with .Values.scheduler.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.scheduler.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.scheduler.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

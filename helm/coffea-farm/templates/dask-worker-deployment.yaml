@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-worker
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "coffea-farm.selectorLabels" . | nindent 6 }}
+      component: worker
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "coffea-farm.selectorLabels" . | nindent 8 }}
+        component: worker
+    spec:
+    {{- with .Values.worker.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.worker.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ template "coffea-farm.fullname" . }}-worker
+          securityContext:
+            {{- toYaml .Values.worker.securityContext | nindent 12 }}
+          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+          args:
+            - dask-worker
+            - {{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}
+          {{- if .Values.worker.resources.limits }}
+            - --nthreads
+            - {{ .Values.worker.resources.limits.cpu | default .Values.worker.default_resources.cpu | quote }}
+            - --memory-limit
+            - {{ .Values.worker.resources.limits.memory | default .Values.worker.default_resources.memory | quote }}
+          {{- end }}
+            - --no-dashboard
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          env:
+          - name: HOME
+            value: {{ .Values.worker.scratchDir }}
+          - name: USER
+            value: coffea
+          - name: X509_USER_PROXY
+            value: "/grid-proxy/x509up"
+          {{- with .Values.worker.env }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: {{ .Values.worker.scratchDir }}
+            name: scratch-volume
+          - mountPath: /grid-proxy
+            name: grid-proxy
+            readOnly: true
+      volumes:
+      - name: scratch-volume
+        emptyDir: {}
+      - name: grid-proxy
+        secret:
+          secretName: grid-proxy
+    {{- with .Values.worker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.worker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.worker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: coffea-farm
+description: A dask cluster with integrated column storage and metadata service
+
+type: application
+version: 0.1.0
+appVersion: dev
+
+dependencies:
+- name: minio
+  version: 3.0.15
+  repository: https://charts.bitnami.com/bitnami
+- name: mongodb
+  version: 7.8.10
+  repository: https://charts.bitnami.com/bitnami

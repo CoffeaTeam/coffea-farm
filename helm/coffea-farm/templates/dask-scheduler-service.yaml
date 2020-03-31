@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-scheduler
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    component: scheduler
+spec:
+  type: {{ .Values.scheduler.service.type }}
+  ports:
+    - name: {{ template "coffea-farm.fullname" . }}-scheduler
+      port: {{ .Values.scheduler.service.port }}
+      targetPort: 8786
+      protocol: TCP
+    - name: {{ template "coffea-farm.fullname" . }}-daskui
+      port: {{ .Values.scheduler.service.uiport }}
+      targetPort: 8787
+      protocol: TCP
+  selector:
+    {{- include "coffea-farm.selectorLabels" . | nindent 4 }}
+    component: scheduler
