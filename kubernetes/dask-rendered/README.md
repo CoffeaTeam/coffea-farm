@@ -14,3 +14,8 @@ After configuration of `values.yaml`, a new manifest can be rendered using
 ```
 helm template --values values.yaml coffea-dask dask/dask > manifest.yaml
 ```
+
+A grid proxy is expected, provided as a secret. Create one with the usual `voms-proxy-init` incantation, followed by:
+```
+kubectl create secret generic grid-proxy --from-file=x509up=$(voms-proxy-info --path) --dry-run -o yaml --save-config | kubectl apply -f -
+```

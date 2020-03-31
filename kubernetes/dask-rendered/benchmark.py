@@ -43,10 +43,10 @@ config = {
     #     'chunkbytes': 1024*128,
     #     'limitbytes': 200 * 1024**2
     # },
-    'cachestrategy': 'dask-worker',
-    'worker_affinity': True,
+    #'cachestrategy': 'dask-worker',
+    #'worker_affinity': True,
     'nano': True,
-    'priority': 1,
+    #'priority': 1,
 }
 chunksize = 100000
 p = NanoEventsProcessor(canaries=['0001fd0d874c9fff11e9a13cd2e55d9fbeef;Events;0;99159;Muon_pt'])

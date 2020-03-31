@@ -55,7 +55,7 @@ spec:
         null
       containers:
         - name: coffea-dask-scheduler
-          image: "coffeateam/coffea-dask:0.1.16"
+          image: "coffeateam/coffea-dask:0.1.18"
           imagePullPolicy: IfNotPresent
           args:
             - dask-scheduler
@@ -113,7 +113,7 @@ spec:
         null
       containers:
         - name: coffea-dask-worker
-          image: "coffeateam/coffea-dask:0.1.16"
+          image: "coffeateam/coffea-dask:0.1.18"
           imagePullPolicy: IfNotPresent
           args:
             - dask-worker
@@ -133,17 +133,25 @@ spec:
           env:
           - name: MALLOC_MMAP_THRESHOLD_
             value: "16384"
+          - name: X509_USER_PROXY
+            value: "/grid-proxy/x509up"
           volumeMounts:
           - mountPath: /opt/app
             name: scratch-volume
-          - mountPath: /opt/columnstore
+          - mountPath: /columnstore
             name: columnstore
+          - mountPath: /grid-proxy
+            name: grid-proxy
+            readOnly: true
       volumes:
       - name: scratch-volume
         emptyDir: {}
       - name: columnstore
         persistentVolumeClaim:
           claimName: columnstore
+      - name: grid-proxy
+        secret:
+          secretName: grid-proxy
 ---
 # Source: dask/templates/dask-scheduler-ingress.yaml
 apiVersion: extensions/v1beta1

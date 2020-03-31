@@ -1,9 +1,8 @@
 scheduler:
   name: scheduler
   image:
-    # repository: "daskdev/dask"
-    repository: "ncsmith91/coffea-dask"
-    tag: 0.1.2
+    repository: "coffeateam/coffea-dask"
+    tag: 0.1.17
     pullPolicy: IfNotPresent
     # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     pullSecrets:
@@ -38,8 +37,8 @@ worker:
   name: worker
   image:
     # repository: "daskdev/dask"
-    repository: "ncsmith91/coffea-dask"
-    tag: 0.1.2
+    repository: "coffeateam/coffea-dask"
+    tag: 0.1.17
     pullPolicy: IfNotPresent
     # dask_worker: "dask-cuda-worker"
     dask_worker: "dask-worker"
