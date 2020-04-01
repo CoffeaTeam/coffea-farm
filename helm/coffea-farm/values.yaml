@@ -57,6 +57,10 @@ minio:
     storageClass: glusterfs-registry-block
   persistence:
     size: 45Gi
+  podAnnotations:
+     prometheus.io/scrape: "true"
+     prometheus.io/path: "/minio/prometheus/metrics"
+     prometheus.io/port: "9000"
 
 mongodb:
   securityContext:
@@ -71,6 +75,7 @@ mongodb:
     limits:
       cpu: 1
       memory: 2G
+  metrics.enabled: true
 
 scheduler:
   image:
