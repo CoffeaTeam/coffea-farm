@@ -1,0 +1,84 @@
+{{- if .Values.notebook.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-notebook
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    component: notebook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "coffea-farm.selectorLabels" . | nindent 6 }}
+      component: notebook
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "coffea-farm.selectorLabels" . | nindent 8 }}
+        component: notebook
+    spec:
+    {{- with .Values.notebook.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.notebook.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ template "coffea-farm.fullname" . }}-notebook
+          securityContext:
+            {{- toYaml .Values.notebook.securityContext | nindent 12 }}
+          image: "{{ .Values.notebook.image.repository }}:{{ .Values.notebook.image.tag }}"
+          imagePullPolicy: {{ .Values.notebook.image.pullPolicy }}
+          args:
+            - jupyter
+            - notebook
+            - --no-browser
+            - --ip
+            - 0.0.0.0
+            - --NotebookApp.base_url=/notebook
+          ports:
+          - name: http
+            containerPort: 8888
+            protocol: TCP
+          resources:
+            {{- toYaml .Values.notebook.resources | nindent 12 }}
+          env:
+          - name: HOME
+            value: {{ .Values.notebook.scratchDir.mountPath }}
+          - name: USER
+            value: coffea
+          - name: X509_USER_PROXY
+            value: "/grid-proxy/x509up"
+          - name: COLUMNSERVICE_URL
+            value: http://{{ template "coffea-farm.fullname" . }}-columnservice:{{ .Values.columnservice.service.port }}
+          {{- with .Values.notebook.env }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: {{ .Values.notebook.scratchDir.mountPath }}
+            name: scratch-volume
+          - mountPath: /grid-proxy
+            name: grid-proxy
+            readOnly: true
+      volumes:
+      - name: scratch-volume
+        {{- default .Values.notebook.scratchDir.default_spec .Values.notebook.scratchDir.spec | toYaml | nindent 8 }}
+      - name: grid-proxy
+        secret:
+          secretName: grid-proxy
+    {{- with .Values.notebook.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.notebook.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.notebook.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end }}

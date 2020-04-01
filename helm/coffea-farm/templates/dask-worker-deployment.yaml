@@ -4,7 +4,7 @@ metadata:
   name: {{ include "coffea-farm.fullname" . }}-worker
   labels:
     {{- include "coffea-farm.labels" . | nindent 4 }}
-    app.kubernetes.io/component: worker
+    component: worker
 spec:
   replicas: {{ .Values.worker.replicas }}
   selector:
@@ -34,11 +34,13 @@ spec:
           args:
             - dask-worker
             - {{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}
-          {{- if .Values.worker.resources.limits }}
+          {{- if .Values.worker.resources.limits.cpu }}
             - --nthreads
-            - {{ .Values.worker.resources.limits.cpu | default .Values.worker.default_resources.cpu | quote }}
+            - {{ .Values.worker.resources.limits.cpu | quote }}
+          {{- end }}
+          {{- if .Values.worker.resources.limits.memory }}
             - --memory-limit
-            - {{ .Values.worker.resources.limits.memory | default .Values.worker.default_resources.memory | quote }}
+            - {{ .Values.worker.resources.limits.memory | quote }}
           {{- end }}
             - --no-dashboard
           resources:
@@ -56,7 +58,7 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           volumeMounts:
-          - mountPath: {{ .Values.worker.scratchDir }}
+          - mountPath: {{ .Values.worker.scratchDir.mountPath }}
             name: scratch-volume
           - mountPath: /grid-proxy
             name: grid-proxy

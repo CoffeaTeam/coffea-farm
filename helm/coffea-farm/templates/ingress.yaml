@@ -1,5 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "coffea-farm.fullname" . -}}
+{{- $notebook := .Values.notebook.enabled -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
@@ -34,6 +35,12 @@ spec:
             backend:
               serviceName: {{ $fullName }}-scheduler
               servicePort: daskui
+          {{- if $notebook }}
+          - path: /notebook
+            backend:
+              serviceName: {{ $fullName }}-notebook
+              servicePort: http
+          {{- end }}
           - path: /
             backend:
               serviceName: {{ $fullName }}-columnservice

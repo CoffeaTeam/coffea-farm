@@ -38,7 +38,6 @@ columnservice:
     port: 8000
 
 minio:
-  name: columnstore
   securityContext:
     enabled: true
     fsGroup: 1000340000
@@ -74,7 +73,6 @@ mongodb:
       memory: 2G
 
 scheduler:
-  name: scheduler
   image:
     repository: "coffeateam/coffea-dask"
     tag: dev
@@ -87,7 +85,7 @@ scheduler:
     uiport: 8787
     externalIPs: []
   resources:
-    requests:
+    limits:
       cpu: 1
       memory: 2G
   tolerations: []
@@ -95,21 +93,41 @@ scheduler:
   affinity: {}
 
 worker:
-  name: worker
   image:
     repository: "coffeateam/coffea-dask"
     tag: dev
     pullPolicy: IfNotPresent
-    dask_worker: "dask-worker"
-  scratchDir: /opt/app
+  scratchDir:
+    mountPath: /opt/app
   replicas: 10
   env:
   - name: MALLOC_MMAP_THRESHOLD_
     value: "16384"
   resources:
-    requests:
+    limits:
       cpu: 4
       memory: 8G
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+
+notebook:
+  enabled: false
+  image:
+    repository: "coffeateam/coffea-dask"
+    tag: dev
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1
+      memory: 2G
+  scratchDir:
+    mountPath: /opt/app
+    default_spec:
+      emptyDir: {}
+    # spec:
+    #   persistentVolumeClaim:
+    #     claimName: notebook-pvc
   tolerations: []
   nodeSelector: {}
   affinity: {}

@@ -1,0 +1,19 @@
+{{- if .Values.notebook.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-notebook
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    component: notebook
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8888
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "coffea-farm.selectorLabels" . | nindent 4 }}
+    component: notebook
+{{- end }}
