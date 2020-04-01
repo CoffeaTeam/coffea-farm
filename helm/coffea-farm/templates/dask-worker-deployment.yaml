@@ -50,6 +50,8 @@ spec:
             value: coffea
           - name: X509_USER_PROXY
             value: "/grid-proxy/x509up"
+          - name: COLUMNSERVICE_URL
+            value: http://{{ template "coffea-farm.fullname" . }}-columnservice:{{ .Values.columnservice.service.port }}
           {{- with .Values.worker.env }}
           {{- toYaml . | nindent 10 }}
           {{- end }}

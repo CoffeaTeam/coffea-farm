@@ -1,6 +1,5 @@
-{{- if .Values.columnservice.ingress.enabled -}}
+{{- if .Values.ingress.enabled -}}
 {{- $fullName := include "coffea-farm.fullname" . -}}
-{{- $svcPort := .Values.columnservice.service.port -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
@@ -11,14 +10,14 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "coffea-farm.labels" . | nindent 4 }}
-  {{- with .Values.columnservice.ingress.annotations }}
+  {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-{{- if .Values.columnservice.ingress.tls }}
+{{- if .Values.ingress.tls }}
   tls:
-  {{- range .Values.columnservice.ingress.tls }}
+  {{- range .Values.ingress.tls }}
     - hosts:
       {{- range .hosts }}
         - {{ . | quote }}
@@ -27,15 +26,17 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.columnservice.ingress.hosts }}
+  {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
-        {{- range .paths }}
-          - path: {{ . }}
+          - path: /scheduler
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
-        {{- end }}
+              serviceName: {{ $fullName }}-scheduler
+              servicePort: daskui
+          - path: /
+            backend:
+              serviceName: {{ $fullName }}-columnservice
+              servicePort: http
   {{- end }}
 {{- end }}

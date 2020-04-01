@@ -8,14 +8,18 @@ metadata:
 spec:
   type: {{ .Values.scheduler.service.type }}
   ports:
-    - name: {{ template "coffea-farm.fullname" . }}-scheduler
+    - name: dask
       port: {{ .Values.scheduler.service.port }}
       targetPort: 8786
       protocol: TCP
-    - name: {{ template "coffea-farm.fullname" . }}-daskui
+    - name: daskui
       port: {{ .Values.scheduler.service.uiport }}
       targetPort: 8787
       protocol: TCP
   selector:
     {{- include "coffea-farm.selectorLabels" . | nindent 4 }}
     component: scheduler
+  {{- with .Values.scheduler.service.externalIPs }}
+  externalIPs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}

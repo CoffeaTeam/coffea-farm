@@ -4,20 +4,20 @@ metadata:
   name: {{ include "coffea-farm.fullname" . }}-columnservice
   labels:
     {{- include "coffea-farm.labels" . | nindent 4 }}
-    app.kubernetes.io/component: columnservice
+    component: columnservice
 spec:
   replicas: {{ .Values.columnservice.replicas }}
   selector:
     matchLabels:
       {{- include "coffea-farm.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: columnservice
+      component: columnservice
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
         {{- include "coffea-farm.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: columnservice
+        component: columnservice
     spec:
     {{- with .Values.columnservice.imagePullSecrets }}
       imagePullSecrets:

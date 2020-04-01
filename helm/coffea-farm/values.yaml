@@ -1,6 +1,13 @@
 nameOverride: ""
 fullnameOverride: ""
 
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: coffea-farm.example.edu
+  tls: []
+
 columnservice:
   replicaCount: 1
 
@@ -30,14 +37,6 @@ columnservice:
     type: ClusterIP
     port: 8000
 
-  ingress:
-    enabled: false
-    annotations: {}
-    hosts:
-      - host: coffea-farm.example.edu
-        paths: ["/api"]
-    tls: []
-
 minio:
   name: columnstore
   securityContext:
@@ -47,7 +46,6 @@ minio:
   mode: distributed
   statefulset:
     replicaCount: 4
-  # passwords cannot be dynamic as volume is encrypted?
   accessKey:
     forcePassword: true
   secretKey:
@@ -68,8 +66,8 @@ mongodb:
     runAsUser: 1000340000
   mongodbDatabase: coffeadb
   mongodbUsername: coffea
-  # mongodbRootPassword can be dynamic
-  # mongodbPassword can be dynamic
+  mongodbRootPassword: ""
+  mongodbPassword: ""
   resources:
     limits:
       cpu: 1
@@ -84,7 +82,7 @@ scheduler:
   replicas: 1
   env: {}
   service:
-    type: "LoadBalancer"
+    type: LoadBalancer
     port: 8786
     uiport: 8787
     externalIPs: []

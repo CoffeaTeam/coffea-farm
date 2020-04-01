@@ -33,11 +33,13 @@ spec:
           imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
           args:
             - dask-scheduler
+            - --dashboard-prefix
+            - scheduler
           ports:
             - name: dask
               containerPort: 8786
               protocol: TCP
-            - name: bokeh
+            - name: daskui
               containerPort: 8787
               protocol: TCP
           resources:
