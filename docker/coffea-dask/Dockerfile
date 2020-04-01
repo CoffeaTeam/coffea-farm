@@ -29,7 +29,9 @@ RUN conda install --yes --freeze-installed \
 
 RUN /opt/conda/bin/pip install --no-cache-dir \
     xxhash==1.3.0 \
-    coffea==0.6.36
+    httpx==0.12.0 \
+    minio==5.0.8 \
+    https://github.com/CoffeaTeam/coffea/archive/dev.zip # c82cf119e33435ce7ef5b98a46829ba0aba03897
 
 RUN mkdir /opt/app
 
