@@ -43,6 +43,10 @@ spec:
             - {{ .Values.worker.resources.limits.memory | quote }}
           {{- end }}
             - --no-dashboard
+            - --lifetime
+            - "1200"
+            - --lifetime-stagger
+            - "60"
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           env:

@@ -29,7 +29,7 @@ spec:
         - name: {{ template "coffea-farm.fullname" . }}-columnservice
           securityContext:
             {{- toYaml .Values.columnservice.securityContext | nindent 12 }}
-          image: "{{ .Values.columnservice.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.columnservice.image.repository }}:{{ .Values.columnservice.image.tag }}"
           imagePullPolicy: {{ .Values.columnservice.image.pullPolicy }}
           args:
             - uvicorn

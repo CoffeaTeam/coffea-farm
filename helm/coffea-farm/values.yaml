@@ -9,10 +9,11 @@ ingress:
   tls: []
 
 columnservice:
-  replicaCount: 1
+  replicas: 2
 
   image:
     repository: coffeateam/coffea-columnservice
+    tag: 0.1.0
     pullPolicy: IfNotPresent
   imagePullSecrets: []
 
@@ -26,7 +27,7 @@ columnservice:
 
   resources:
     limits:
-      cpu: 500m
+      cpu: 1
       memory: 512Mi
 
   nodeSelector: {}
@@ -52,7 +53,7 @@ minio:
   resources:
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 2Gi
   global:
     storageClass: glusterfs-registry-block
   persistence:
@@ -79,8 +80,8 @@ mongodb:
 
 scheduler:
   image:
-    repository: "coffeateam/coffea-dask"
-    tag: dev
+    repository: coffeateam/coffea-columnservice
+    tag: 0.1.0
     pullPolicy: IfNotPresent
   replicas: 1
   env: {}
@@ -99,19 +100,19 @@ scheduler:
 
 worker:
   image:
-    repository: "coffeateam/coffea-dask"
-    tag: dev
+    repository: coffeateam/coffea-columnservice
+    tag: 0.1.0
     pullPolicy: IfNotPresent
   scratchDir:
     mountPath: /opt/app
-  replicas: 10
+  replicas: 20
   env:
   - name: MALLOC_MMAP_THRESHOLD_
     value: "16384"
   resources:
     limits:
-      cpu: 4
-      memory: 8G
+      cpu: 2
+      memory: 4G
   tolerations: []
   nodeSelector: {}
   affinity: {}
@@ -119,8 +120,8 @@ worker:
 notebook:
   enabled: false
   image:
-    repository: "coffeateam/coffea-dask"
-    tag: dev
+    repository: coffeateam/coffea-columnservice
+    tag: 0.1.0
     pullPolicy: IfNotPresent
   resources:
     limits:

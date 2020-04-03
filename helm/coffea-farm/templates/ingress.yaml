@@ -1,4 +1,5 @@
 {{- if .Values.ingress.enabled -}}
+{{- $release := .Release.Name -}}
 {{- $fullName := include "coffea-farm.fullname" . -}}
 {{- $notebook := .Values.notebook.enabled -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -35,6 +36,10 @@ spec:
             backend:
               serviceName: {{ $fullName }}-scheduler
               servicePort: daskui
+          - path: /minio
+            backend:
+              serviceName: {{ $release }}-minio
+              servicePort: minio
           {{- if $notebook }}
           - path: /notebook
             backend:

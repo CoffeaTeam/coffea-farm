@@ -4,7 +4,6 @@ description: A dask cluster with integrated column storage and metadata service
 
 type: application
 version: 0.1.0
-appVersion: dev
 
 dependencies:
 - name: minio
