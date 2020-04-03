@@ -35,7 +35,7 @@ spec:
             - uvicorn
             - --host
             - 0.0.0.0
-            - columnservice:app
+            - columnservice.server:app
           ports:
             - name: http
               containerPort: 8000
