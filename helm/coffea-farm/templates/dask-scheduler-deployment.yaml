@@ -42,6 +42,18 @@ spec:
             - name: daskui
               containerPort: 8787
               protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /scheduler/health
+              port: daskui
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /scheduler/health
+              port: daskui
+            initialDelaySeconds: 5
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.scheduler.resources | nindent 12 }}
           env:

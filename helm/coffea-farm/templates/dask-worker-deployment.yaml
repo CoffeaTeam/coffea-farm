@@ -43,10 +43,25 @@ spec:
             - {{ .Values.worker.resources.limits.memory | quote }}
           {{- end }}
             - --no-dashboard
+            - --nanny-port
+            - "8788"
             - --lifetime
-            - "1200"
+            - "2400"
             - --lifetime-stagger
             - "60"
+            - --lifetime-restart
+          ports:
+          - containerPort: 8788
+          readinessProbe:
+            tcpSocket:
+              port: 8788
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          livenessProbe:
+            tcpSocket:
+              port: 8788
+            initialDelaySeconds: 5
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           env:

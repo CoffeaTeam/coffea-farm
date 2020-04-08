@@ -13,7 +13,7 @@ columnservice:
 
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.0
+    tag: 0.1.5
     pullPolicy: IfNotPresent
   imagePullSecrets: []
 
@@ -46,6 +46,10 @@ minio:
   mode: distributed
   statefulset:
     replicaCount: 4
+  # global:
+  #   storageClass:
+  persistence:
+    size: 100Gi
   accessKey:
     forcePassword: true
   secretKey:
@@ -54,10 +58,6 @@ minio:
     limits:
       cpu: 500m
       memory: 2Gi
-  global:
-    storageClass: glusterfs-registry-block
-  persistence:
-    size: 45Gi
   podAnnotations:
      prometheus.io/scrape: "true"
      prometheus.io/path: "/minio/prometheus/metrics"
@@ -76,12 +76,13 @@ mongodb:
     limits:
       cpu: 1
       memory: 2G
-  metrics.enabled: true
+  metrics:
+    enabled: true
 
 scheduler:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.0
+    tag: 0.1.5
     pullPolicy: IfNotPresent
   replicas: 1
   env: {}
@@ -101,7 +102,7 @@ scheduler:
 worker:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.0
+    tag: 0.1.5
     pullPolicy: IfNotPresent
   scratchDir:
     mountPath: /opt/app
@@ -121,7 +122,7 @@ notebook:
   enabled: false
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.0
+    tag: 0.1.5
     pullPolicy: IfNotPresent
   resources:
     limits:

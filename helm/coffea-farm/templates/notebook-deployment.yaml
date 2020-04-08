@@ -39,6 +39,7 @@ spec:
             - --ip
             - 0.0.0.0
             - --NotebookApp.base_url=/notebook
+            - --notebook-dir={{ .Values.notebook.scratchDir.mountPath }}
           ports:
           - name: http
             containerPort: 8888

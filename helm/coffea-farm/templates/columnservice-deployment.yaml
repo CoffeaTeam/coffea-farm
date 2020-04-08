@@ -44,10 +44,14 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.columnservice.resources | nindent 12 }}
           env:
