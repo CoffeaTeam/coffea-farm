@@ -1,0 +1,75 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-update-secrets
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["delete", "create", "patch", "get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-gridproxy-helper
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-gridproxy-secret-update
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "coffea-farm.fullname" . }}-gridproxy-helper
+roleRef:
+  kind: Role
+  name: {{ include "coffea-farm.fullname" . }}-update-secrets
+  apiGroup: ""
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "coffea-farm.fullname" . }}-gridproxy
+  labels:
+    {{- include "coffea-farm.labels" . | nindent 4 }}
+    component: gridproxy
+spec:
+  schedule: "1 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ include "coffea-farm.fullname" . }}-gridproxy-helper
+          containers:
+          - name: {{ template "coffea-farm.fullname" . }}-gridproxy
+            securityContext:
+              runAsUser: 1000340000
+            image: coffeateam/gridproxy-renewer:0.1.5
+            args:
+              - init-proxy
+              - "72:00"  # proxy lifetime
+            env:
+            - name: VO
+              value: "cms"
+            - name: CERT
+              value: "/grid-cert/usercert.pem"
+            - name: KEY
+              value: "/grid-cert/userkey.pem"
+            volumeMounts:
+            - mountPath: /grid-cert
+              name: grid-cert
+              readOnly: true
+          volumes:
+          - name: grid-cert
+            secret:
+              secretName: grid-cert
+              items:
+              - key: usercert.pem
+                path: usercert.pem
+              - key: userkey.pem
+                path: userkey.pem
+          restartPolicy: OnFailure
