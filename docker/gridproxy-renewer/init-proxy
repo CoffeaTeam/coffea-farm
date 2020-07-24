@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cp $CERT /tmp/cert
+cp $KEY /tmp/key
+chmod 0600 /tmp/cert
+chmod 0600 /tmp/key
+voms-proxy-init --voms $VO --rfc -cert /tmp/cert -key /tmp/key --valid $1 -out /tmp/proxy
+kubectl create secret generic grid-proxy --from-file=x509up=/tmp/proxy --dry-run=client -o yaml --save-config | kubectl apply -f -
