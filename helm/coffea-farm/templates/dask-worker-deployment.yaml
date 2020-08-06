@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
           args:
             - dask-worker
-            - {{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}
+            - "tls://{{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}"
           {{- if .Values.worker.resources.limits.cpu }}
             - --nthreads
             - {{ .Values.worker.resources.limits.cpu | quote }}
@@ -50,6 +50,10 @@ spec:
             - --lifetime-stagger
             - "60"
             - --lifetime-restart
+            - --tls-ca-file
+            - /dask-tls-certs/ca.crt
+            - --tls-cert
+            - /dask-tls-certs/hostcert.pem
           ports:
           - containerPort: 8788
           readinessProbe:
@@ -82,12 +86,18 @@ spec:
           - mountPath: /grid-proxy
             name: grid-proxy
             readOnly: true
+          - mountPath: /dask-tls-certs
+            name: dask-tls-certs
+            readOnly: true
       volumes:
       - name: scratch-volume
         emptyDir: {}
       - name: grid-proxy
         secret:
           secretName: grid-proxy
+      - name: dask-tls-certs
+        secret:
+          secretName: dask-tls-certs
     {{- with .Values.worker.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

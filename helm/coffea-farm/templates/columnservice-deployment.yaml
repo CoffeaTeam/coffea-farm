@@ -57,10 +57,14 @@ spec:
           env:
           - name: X509_USER_PROXY
             value: "/grid-proxy/x509up"
+          - name: TLS_PATH
+            value: "/dask-tls-certs"
+          - name: USER_ALLOWLIST
+            value: {{ .Values.columnservice.allowed_users }}
           - name: COLUMNSERVICE_BUCKET
             value: {{ .Values.columnservice.bucketname }}
           - name: DASK_SCHEDULER
-            value: {{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}
+            value: "tls://{{ template "coffea-farm.fullname" . }}-scheduler:{{ .Values.scheduler.service.port }}"
           - name: MINIO_HOSTNAME
             value: {{ .Release.Name }}-minio:{{ .Values.minio.service.port }}
           - name: MINIO_ACCESS_KEY
@@ -91,10 +95,16 @@ spec:
           - mountPath: /grid-proxy
             name: grid-proxy
             readOnly: true
+          - mountPath: /dask-tls-certs
+            name: dask-tls-certs
+            readOnly: true
       volumes:
       - name: grid-proxy
         secret:
           secretName: grid-proxy
+      - name: dask-tls-certs
+        secret:
+          secretName: dask-tls-certs
       {{- with .Values.columnservice.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

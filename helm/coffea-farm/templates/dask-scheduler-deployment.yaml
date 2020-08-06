@@ -35,6 +35,10 @@ spec:
             - dask-scheduler
             - --dashboard-prefix
             - scheduler
+            - --tls-ca-file
+            - /dask-tls-certs/ca.crt
+            - --tls-cert
+            - /dask-tls-certs/hostcert.pem
           ports:
             - name: dask
               containerPort: 8786
@@ -66,10 +70,16 @@ spec:
           - mountPath: /grid-proxy
             name: grid-proxy
             readOnly: true
+          - mountPath: /dask-tls-certs
+            name: dask-tls-certs
+            readOnly: true
       volumes:
       - name: grid-proxy
         secret:
           secretName: grid-proxy
+      - name: dask-tls-certs
+        secret:
+          secretName: dask-tls-certs
     {{- with .Values.scheduler.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
