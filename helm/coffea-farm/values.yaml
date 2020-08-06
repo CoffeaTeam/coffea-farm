@@ -13,7 +13,7 @@ columnservice:
 
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.8
+    tag: 0.1.9
     pullPolicy: IfNotPresent
   imagePullSecrets: []
 
@@ -83,7 +83,7 @@ mongodb:
 scheduler:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.8
+    tag: 0.1.9
     pullPolicy: IfNotPresent
   replicas: 1
   env: {}
@@ -103,7 +103,7 @@ scheduler:
 worker:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.8
+    tag: 0.1.9
     pullPolicy: IfNotPresent
   scratchDir:
     mountPath: /opt/app
@@ -123,7 +123,7 @@ notebook:
   enabled: false
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.8
+    tag: 0.1.9
     pullPolicy: IfNotPresent
   resources:
     limits:
