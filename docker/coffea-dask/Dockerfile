@@ -11,25 +11,25 @@ RUN apt-get install gnupg2 -y \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN conda install --yes --freeze-installed \
-    -c conda-forge \
-    bokeh==2.1.1 \
-    dask==2.21.0 \
-    distributed==2.21.0 \
-    matplotlib==3.3.0 \
+RUN conda install --yes --freeze-installed -c conda-forge \
+    bokeh==2.2.3 \
+    dask==2.30.0 \
+    distributed==2.30.0 \
+    matplotlib==3.3.2 \
+    jupyter-server-proxy \
     lz4==3.1.0 \
-    numba==0.50.1 \
-    numpy==1.19.1 \
-    pandas==1.0.5 \
-    python-blosc==1.9.1 \
-    scipy==1.5.2 \
+    numba==0.51.2 \
+    numpy==1.19.2 \
+    pandas==1.1.4 \
+    python-blosc==1.9.2 \
+    scipy==1.5.3 \
     tini==0.18.0 \
-    xrootd==5.0.0 \
+    xrootd==5.0.2 \
     && conda clean -afy
 
 RUN /opt/conda/bin/pip install --no-cache-dir \
-    xxhash==1.4.4 \
-    coffea==0.6.42
+    xxhash==2.0.0 \
+    coffea==0.6.45
 
 RUN mkdir /opt/app
 
