@@ -13,7 +13,7 @@ columnservice:
 
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.9
+    tag: 0.1.10
     pullPolicy: IfNotPresent
   imagePullSecrets: []
 
@@ -48,7 +48,7 @@ minio:
   statefulset:
     replicaCount: 4
   # global:
-  #   storageClass:
+  #   storageClass: ceph
   persistence:
     size: 100Gi
   accessKey:
@@ -79,11 +79,14 @@ mongodb:
       memory: 2G
   metrics:
     enabled: true
+  persistence:
+    size: 10Gi
+    storageClass: ceph
 
 scheduler:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.9
+    tag: 0.1.10
     pullPolicy: IfNotPresent
   replicas: 1
   env: {}
@@ -103,7 +106,7 @@ scheduler:
 worker:
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.9
+    tag: 0.1.10
     pullPolicy: IfNotPresent
   scratchDir:
     mountPath: /opt/app
@@ -123,7 +126,7 @@ notebook:
   enabled: false
   image:
     repository: coffeateam/coffea-columnservice
-    tag: 0.1.9
+    tag: 0.1.10
     pullPolicy: IfNotPresent
   resources:
     limits:
